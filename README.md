@@ -20,21 +20,26 @@ ToDo list:
 ----------
 
 * Set database & _models_
+
 1. SQLight
 2. SQLAlchemy
 
 * Create _bdObject_ class as a separate layer to manupulate database from app
+
 1. SQLAlchemy
 2. _models_
 
 * Make webb app
+
 1. Flask
 2. Flask_resful
 3. _bdObject_
 
 * Make Front-End
+
 1. templates (HTML, jinja)
 2. scripts (JavaScript, jQuery)
 
 * Wrap app in login
+
 1. don't forget to put a secret_key
