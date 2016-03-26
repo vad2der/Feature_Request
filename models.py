@@ -41,14 +41,14 @@ class RequestTicket(Base):
     ticket_url = Column(String(100))
     product_area = Column(Enum('Policies', 'Billing', 'Claims', 'Reports'))
 
-    def __init__(self, ind, title, description, client, client_priority, target_date, product_area):
+    def __init__(self, ind, title, description, client, client_priority, target_date, ticket_url, product_area):
         self.id = ind
         self.title = str(title)
         self.description = str(description)
         self.client = client
         self.client_priority = int(client_priority)
         self.target_date = target_date
-        self.ticket_url = 'XXX'     # to be updated right after getting an id
+        self.ticket_url = ticket_url     # to be updated right after getting an id
         self.product_area = product_area
 
     def __str__(self):
@@ -66,4 +66,5 @@ class RequestTicket(Base):
                 u"client": self.client,
                 u"client_priority": self.client_priority,
                 u"target_date": str(self.target_date),
+                u"ticket_url": str(self.ticket_url),
                 u"product_area": self.product_area}
