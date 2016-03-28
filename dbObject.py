@@ -33,7 +33,7 @@ def insert_new(title, description, client, client_priority, target_date, url_roo
     # instantiate a new object from mapped class
     rt = RequestTicket(ind=int(ind), title=str(title), description=str(description), client=client,
                        client_priority=int(client_priority), target_date=datetime.strptime(target_date, "%Y %m %d"),
-                       ticket_url=url_root+'/request/'+str(ind), product_area=product_area)
+                       ticket_url=url_root+'/ticket/'+str(ind), product_area=product_area)
 
     try:
         s.add(rt)
@@ -91,7 +91,6 @@ def get_gaps():
     :return: a list with gaps in priorities
     """
     priority_list = []
-    check_p = 1
     for p, in s.query(RequestTicket.client_priority).all():
         priority_list.append(p)
     priority_gap_list = []
@@ -106,9 +105,26 @@ def eleminate_gaps(gap_list):
     :param gap_list:
     :return:
     """
-    try:
-        for g in gap_list:
-            pass
-        s.commit()
-    except Exception as e:
-        s.rollback()
+    for g in sorted(gap_list, reversed):
+        print g
+        for priority in range(g+1, int(s.query(func.max(RequestTicket.client_priority)).scalar())+1):
+            try:
+                s.query(RequestTicket).filter(RequestTicket.client_priority == priority)\
+                                      .update({"client_priority": priority-1})
+                s.commit()
+            except Exception as e:
+                s.rollback()
+
+def get_requests_by_id_list(id_list):
+    """
+    get a list of particular requests basing on a list of ids
+    :param id_list:
+    :return: list of requests
+    """
+    output = []
+    for id in id_list:
+        try:
+            output.append(s.query(RequestTicket).filter(RequestTicket.id == id).first())
+        except Exception as e:
+            print "wrong list requested"
+    return output

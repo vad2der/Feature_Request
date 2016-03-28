@@ -1,0 +1,16 @@
+table {
+    width: 100%;
+    font-family: "Lucida Console";
+}
+
+tr, td {
+    border-bottom: 1px solid #3366ff;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2}
+tr:hover {background-color: #99ccff}
+
+td {
+    height: 50px;
+    vertical-align: center;
+}

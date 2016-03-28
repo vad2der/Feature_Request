@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request ticket page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"></link>
+</head>
+<body>
+    <h1>Request ticket page - ID: {{ ticket.id }}</h1>
+    <table>
+        <tr>
+            <td>ID</td>
+            <td>{{ticket.id}}</td>
+        </tr>
+        <tr>
+            <td>Title</td>
+            <td>{{ticket.title}}</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>{{ticket.description}}</td>
+        </tr>
+        <tr>
+            <td>Client</td>
+            <td>{{ticket.client}}</td>
+        </tr>
+        <tr>
+            <td>Client Priority</td>
+            <td>{{ticket.client_priority}}</td>
+        </tr>
+        <tr>
+            <td>Target Date</td>
+            <td>{{ticket.target_date}}</td>
+        </tr>
+        <tr>
+            <td>Ticket URL</td>
+            <td>{{ticket.ticket_url}}</td>
+        </tr>
+        <tr>
+            <td>Product Area</td>
+            <td>{{ticket.product_area}}</td>
+        </tr>
+
+    </table>
+</body>
+</html>
