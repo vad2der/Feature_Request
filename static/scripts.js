@@ -10,7 +10,9 @@ var ticketTemplate = "<li>"+
 	                    "<p class='client_priority' data='{{client_priority}}'>Priority: {{client_priority}}</p>"+
 	                    "<p class='target_date' data='{{target_date}}'>Target Date: {{target_date}}</p>"+"<p class='ticket_url' data='{{ticket_url}}' hidden>URL: {{ticket_url}}</p>"+
 	                    "<p class='product_area' data='{{product_area}}'>Product Area: {{product_area}}</p>"+
-	                    "<button id='edit' data-id='{{id}}'>Edit</Button><button id='delete' data-id='{{id}}'>Delete</Button>"
+	                    "<button id='edit' data-id='{{id}}'>Edit</button>"+
+						"<button id='delete' data-id='{{id}}'>Delete</button>"+
+						"<button id='open' data-id='{{id}}'>Open</button>"+
 	                 "</li>";
 
 // function to fill drop down menu with possible client names
@@ -126,7 +128,7 @@ var insert_new_ticket = function(){
         client_priority: $('#possible_priorities').val(),
         target_date: date,
         product_area: $('#production_area_drop_down').val(),
-        url_root: window.location.hostname
+        url_root: window.location.origin
     };
     if(check_fields(new_request)){
         $.ajax({
@@ -227,9 +229,9 @@ var update_entry = function(){
         client_priority: $('#possible_priorities').val(),
         target_date: date,
         product_area: $('#production_area_drop_down').val(),
-        url_root: window.location.hostname.toString()
+        url_root: window.location.origin.toString()
 		};
-	alert(JSON.stringify(request));
+	//alert(JSON.stringify(request));
 	$.ajax({
 		type: 'PUT',
 		url: '/api/ticket/update',
@@ -263,4 +265,26 @@ var delete_entry = function (li) {
 $('#ticket_list').delegate('#delete', 'click', function(){
     $li = $(this).closest('li');
      delete_entry($li);
+});
+
+//hover on list of tickets
+$('#ticket_list').delegate("li", 'mouseover', function(){
+    $li = $(this).closest('li');
+	$li.mouseover(function(){
+        $li.css("background-color", "grey");
+    });
+});
+$('#ticket_list').delegate("li", 'mouseout', function(){
+	$li = $(this).closest('li');
+	$li.mouseout(function(){
+        $li.css("background-color", "initial");
+    });
+});
+//click on an item in the list
+$('#ticket_list').delegate('#open', 'click', function(){
+    $li = $(this).closest('li');
+    var id = $li.find('.id').attr('data');
+	var url = window.location.origin.toString() + '/ticket/' + id.toString();
+	window.open(url);
+  return false;
 });

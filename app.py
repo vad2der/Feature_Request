@@ -157,11 +157,11 @@ def get_root_url():
 if __name__ == "__main__":
 
     # will drop existing and create new tables
-    db.create_tables()
+    #db.create_tables()
     # test entries
-    db.insert_new("request_1", "description for request 1", ClientName.CLIENT_A, 1, 'Sun, 01 May 2016', get_root_url(), ProductArea.BILLING)
-    db.insert_new("request_2", "description for request 2", ClientName.CLIENT_B, 2, 'Mon, 02 May 2016', get_root_url(), ProductArea.CLAIM)
-    db.insert_new("request_3", "description for request 3", ClientName.CLIENT_C, 3, 'Tue, 03 May 2016', get_root_url(), ProductArea.POLICIES)
+    #db.insert_new("request_1", "description for request 1", ClientName.CLIENT_A, 1, 'Sun, 01 May 2016', get_root_url(), ProductArea.BILLING)
+    #db.insert_new("request_2", "description for request 2", ClientName.CLIENT_B, 2, 'Mon, 02 May 2016', get_root_url(), ProductArea.CLAIM)
+    #db.insert_new("request_3", "description for request 3", ClientName.CLIENT_C, 3, 'Tue, 03 May 2016', get_root_url(), ProductArea.POLICIES)
     app.run(debug=True)
 
 
