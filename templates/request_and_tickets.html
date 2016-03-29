@@ -14,16 +14,16 @@
     <table>
         <tr hidden>
             <td>ID</td>
-            <td><span id="ticket_id"></span></td>
+            <td><span id="ticket_id" span></input></td>
         </tr>
         <tr>
             <td>Title</td>
             <td><textarea id="ticket_title"
-                       value="Input title of you request"
-                       onfocus="if (this.value == 'Input title of you request') this.value=''"
+                       value="Input title of your request"
+                       onfocus="if (this.value == 'Input title of your request') this.value=''"
                        maxlength="50"
                        cols="22"
-                       rows="3"></textarea></td>
+                       rows="3">Input title of your request</textarea></td>
         </tr>
         <tr>
             <td>Description</td>
@@ -32,7 +32,7 @@
                        onfocus="if (this.value == 'Input concise description of your request') this.value=''"
                        maxlength="200"
                        rows="6"
-                       cols="22"></textarea></td>
+                       cols="22">Input concise description of your request</textarea></td>
         </tr>
         <tr>
             <td>Client</td>
@@ -44,7 +44,8 @@
         </tr>
         <tr>
             <td>Target Date</td>
-            <td><input id="date"> </input></td>
+            <td><input id="date" value="Pick a date"
+                       onfocus="if (this.value == 'Pick a date') this.value=''"></input></td>
         </tr>
         <tr hidden>
             <td>Ticket URL</td>
@@ -57,6 +58,7 @@
     </table>
     <button id="submit">Submit</button>
     <button id="update" hidden>Update</button>
+	<button id="reset">Reset</button>
 </section>
 
 <ul id="ticket_list"> List of existing tickets

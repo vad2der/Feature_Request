@@ -19,7 +19,7 @@ def create_tables():
 
 def get_all():
     # get all entries
-    return s.query(RequestTicket).all()
+    return s.query(RequestTicket).order_by(RequestTicket.client_priority).all()
 
 
 def get_all_ticket_ids():
@@ -33,12 +33,13 @@ def get_all_ticket_ids():
     return id_list
 
 
-def insert_new(title, description, client, client_priority, target_date, url_root, product_area):
-    ind = 0
-    try:
-        ind = int(s.query(func.max(RequestTicket.id)).scalar()) +1
-    except Exception as e:
-        ind += 1
+def insert_new(title, description, client, client_priority, target_date, url_root, product_area, ind=None):
+    if ind is None:
+        ind = 0
+        try:
+            ind = int(s.query(func.max(RequestTicket.id)).scalar()) +1
+        except Exception as e:
+            ind += 1
     # instantiate a new object from mapped class
     rt = RequestTicket(ind=int(ind), title=str(title), description=str(description), client=client,
                        client_priority=int(client_priority), target_date=datetime.strptime(target_date, "%a, %d %b %Y"),
@@ -90,8 +91,12 @@ def get_possible_priorities():
     for p, in s.query(RequestTicket.client_priority).all():
         priority_list.append(p)
     # and the next one
-    priority_list.append(priority_list[-1]+1)
-    return priority_list
+    if len(priority_list) > 0:
+        priority_list.append(priority_list[-1]+1)
+    else:
+        priority_list = [1]
+    priority_list = set(priority_list)    
+    return list(priority_list)
 
 
 def get_gaps():
@@ -102,7 +107,7 @@ def get_gaps():
     for p, in s.query(RequestTicket.client_priority).all():
         priority_list.append(p)
     priority_gap_list = []
-    for check_p in range(1, priority_list[-1]):
+    for check_p in range(1, max(priority_list)+1):
         if check_p not in priority_list:
             priority_gap_list.append(check_p)
     return priority_gap_list
@@ -115,7 +120,6 @@ def eleminate_gaps(gap_list):
     :return:
     """
     for g in sorted(gap_list, reversed):
-        print g
         for priority in range(g+1, int(s.query(func.max(RequestTicket.client_priority)).scalar())+1):
             try:
                 s.query(RequestTicket).filter(RequestTicket.client_priority == priority)\
@@ -157,3 +161,16 @@ def get_production_area_list():
     pa=ProductArea()
     return pa.production_area_list()
 
+def delete_entry(id):
+    s.query(RequestTicket).filter(RequestTicket.id == id).delete()
+
+def update_entry(ticket):
+    rt = {'id': ticket['id'],
+          'title': ticket['title'],
+          'description': ticket['description'],
+          'client': ticket['client'],
+          'client_priority': ticket['client_priority'],
+          'target_date': ticket['target_date'],
+          'url_root': ticket['url_root'],
+          'product_area': ticket['product_area']}
+    s.query(RequestTicket).filter(RequestTicket.id == id).update({rt})

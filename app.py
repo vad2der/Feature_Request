@@ -6,6 +6,8 @@ from models import ClientName, ProductArea
 import dbObject as db
 from flask import Flask, request, Request, render_template, flash, url_for, jsonify
 from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
+import ast
+import time
 
 
 app = Flask(__name__)
@@ -32,8 +34,10 @@ class FeatureRequest_api(Resource):
         :param param:
         :return:
         """
-        if param == "all":
-            return db.get_all()
+        if param == "all":            
+            output = db.get_all()
+            return output, 200
+
 
     def post(self, param):
         """
@@ -42,6 +46,9 @@ class FeatureRequest_api(Resource):
         :return:
         """
         if param =="new":
+            entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'))
+            if len(entries_to_downgrade) > 0:
+                db.downgrade_priorities(entries_to_downgrade)
             db.insert_new(title=request.form.get('title'),
                           description=request.form.get('description'),
                           client=request.form.get('client'),
@@ -51,11 +58,53 @@ class FeatureRequest_api(Resource):
                           product_area=request.form.get('product_area'))
         return '', 201
 
-    def delete(self):
-        pass
 
-    def update(self):
-        pass
+    def delete(self, param):
+        if param == 'delete':
+            db.delete_entry(request.form.get('id'))
+        gaps = db.get_gaps()
+        if len(gaps) > 0:
+            db.eleminate_gaps(gaps)
+        return '', 204
+
+
+    def put(self, param):
+        if param == 'update':
+            ticket_id = request.form.get('id')
+            a = str(db.get_requests_by_id_list([ticket_id])[0])
+            b = ast.literal_eval(a)            
+            if b["client_priority"] == str(request.form.get('client_priority')):
+                db.update_entry(id=request.form.get('id'),
+				          title=request.form.get('title'),
+                          description=request.form.get('description'),
+                          client=request.form.get('client'),
+                          client_priority=request.form.get('client_priority'),
+                          target_date=request.form.get('target_date'),
+                          url_root=request.form.get('url_root'),
+                          product_area=request.form.get('product_area'))
+            else:
+                db.delete_entry(ticket_id)
+                gaps = db.get_gaps()
+                print "----------------------------"
+                print gaps
+                if len(gaps) > 0:
+                    db.eleminate_gaps(gaps)
+                entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'))
+                if len(entries_to_downgrade) > 0:
+                    db.downgrade_priorities(entries_to_downgrade)
+                db.insert_new(ind=request.form.get('id'),
+				          title=request.form.get('title'),
+                          description=request.form.get('description'),
+                          client=request.form.get('client'),
+                          client_priority=request.form.get('client_priority'),
+                          target_date=request.form.get('target_date'),
+                          url_root=request.form.get('url_root'),
+                          product_area=request.form.get('product_area'))
+        time.sleep(1)
+        gaps = db.get_gaps()
+        if len(gaps) > 0:
+            db.eleminate_gaps(gaps)
+        return '', 201
 
 
 class Utils_api(Resource):
