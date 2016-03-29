@@ -18,30 +18,36 @@ def create_tables():
 
 
 def get_all():
-    # get the
+    # get all entries
     return s.query(RequestTicket).all()
+
+
+def get_all_ticket_ids():
+    """
+    function gets all ids in RequestTicket table
+    :return list of ids
+    """
+    id_list = []
+    for id, in s.query(RequestTicket.id).all():
+        id_list.append(id)
+    return id_list
 
 
 def insert_new(title, description, client, client_priority, target_date, url_root, product_area):
     ind = 0
     try:
         ind = int(s.query(func.max(RequestTicket.id)).scalar()) +1
-
     except Exception as e:
         ind += 1
-
     # instantiate a new object from mapped class
     rt = RequestTicket(ind=int(ind), title=str(title), description=str(description), client=client,
-                       client_priority=int(client_priority), target_date=datetime.strptime(target_date, "%Y %m %d"),
+                       client_priority=int(client_priority), target_date=datetime.strptime(target_date, "%a, %d %b %Y"),
                        ticket_url=url_root+'/ticket/'+str(ind), product_area=product_area)
-
     try:
         s.add(rt)
         s.commit()
     except Exception as e:
         s.rollback()
-
-
     # update the entry with ticket URL = "/ticket/" + entry.id
 
 
@@ -75,6 +81,7 @@ def downgrade_priorities(entry_ids):
     except Exception as e:
         s.rollback()
 
+
 def get_possible_priorities():
     """
     :return: gathers all existing priorities and adds one more at the end
@@ -85,6 +92,7 @@ def get_possible_priorities():
     # and the next one
     priority_list.append(priority_list[-1]+1)
     return priority_list
+
 
 def get_gaps():
     """
@@ -98,6 +106,7 @@ def get_gaps():
         if check_p not in priority_list:
             priority_gap_list.append(check_p)
     return priority_gap_list
+
 
 def eleminate_gaps(gap_list):
     """
@@ -115,6 +124,7 @@ def eleminate_gaps(gap_list):
             except Exception as e:
                 s.rollback()
 
+
 def get_requests_by_id_list(id_list):
     """
     get a list of particular requests basing on a list of ids
@@ -128,3 +138,22 @@ def get_requests_by_id_list(id_list):
         except Exception as e:
             print "wrong list requested"
     return output
+
+
+def get_client_list():
+    """
+    function to get all clients from db
+    :return:
+    """
+    cn = ClientName()
+    return cn.client_list()
+
+
+def get_production_area_list():
+    """
+    function to get all clients from db
+    :return:
+    """
+    pa=ProductArea()
+    return pa.production_area_list()
+

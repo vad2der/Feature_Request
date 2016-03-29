@@ -6,7 +6,7 @@ import json
 Base = declarative_base()
 
 
-class ClientName(enum.Enum):
+class ClientName():
     """
     class to declare enum on possible client names
     """
@@ -14,8 +14,11 @@ class ClientName(enum.Enum):
     CLIENT_B = 'Client B'
     CLIENT_C = 'Client C'
 
+    def client_list(self):
+        return [self.CLIENT_A, self.CLIENT_B, self.CLIENT_C]
 
-class ProductArea(enum.Enum):
+
+class ProductArea():
     """
     class to declare enum in possible product areas
     """
@@ -23,6 +26,9 @@ class ProductArea(enum.Enum):
     BILLING = 'Billing'
     CLAIM = 'Claims'
     REPORTS = 'Reports'
+
+    def production_area_list(self):
+        return [self.POLICIES, self.BILLING, self.CLAIM, self.REPORTS]
 
 
 # Model classes to declare schema of the DB

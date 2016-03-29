@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request and tickets</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
+</head>
+<body>
+    <h1>Request ticket page</h1>
+<section id="ticket_request">
+    <table>
+        <tr hidden>
+            <td>ID</td>
+            <td><span id="ticket_id"></span></td>
+        </tr>
+        <tr>
+            <td>Title</td>
+            <td><textarea id="ticket_title"
+                       value="Input title of you request"
+                       onfocus="if (this.value == 'Input title of you request') this.value=''"
+                       maxlength="50"
+                       cols="22"
+                       rows="3"></textarea></td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td><textarea id="ticket_description"
+                       value="Input concise description of your request"
+                       onfocus="if (this.value == 'Input concise description of your request') this.value=''"
+                       maxlength="200"
+                       rows="6"
+                       cols="22"></textarea></td>
+        </tr>
+        <tr>
+            <td>Client</td>
+            <td><select type="text" id="client_drop_down"></select></td>
+        </tr>
+        <tr>
+            <td>Client Priority</td>
+            <td><select type="text" id="possible_priorities"></select></td>
+        </tr>
+        <tr>
+            <td>Target Date</td>
+            <td><input id="date"> </input></td>
+        </tr>
+        <tr hidden>
+            <td>Ticket URL</td>
+            <td><span id="ticket_url"></span></td>
+        </tr>
+        <tr>
+            <td>Product Area</td>
+            <td><select type="text" id="production_area_drop_down"></select></td>
+        </tr>
+    </table>
+    <button id="submit">Submit</button>
+    <button id="update" hidden>Update</button>
+</section>
+
+<ul id="ticket_list"> List of existing tickets
+
+</ul>
+
+</body>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</html>
