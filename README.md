@@ -22,6 +22,9 @@ To run the app type:
 Database of choise was SQLight to simplify usage - no database server has to be installed and run.
 Open a browser. Application is built on Flask, and by default hostname will be: `http://127.0.0.1:5000/`
 
+`username = testUser01`
+`password = testUser01`
+
 
 Requirements:
 -------------
@@ -62,6 +65,6 @@ ToDo list:
 1. ~~templates (HTML, jinja)~~
 2. ~~scripts (JavaScript, jQuery)~~
 
-* Wrap app in login
+* ~~Wrap app in login~~
 
-1. don't forget to put a secret_key
+1. ~~don't forget to put a secret_key~~
