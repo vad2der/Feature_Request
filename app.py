@@ -85,8 +85,6 @@ class FeatureRequest_api(Resource):
             else:
                 db.delete_entry(ticket_id)
                 gaps = db.get_gaps()
-                print "----------------------------"
-                print gaps
                 if len(gaps) > 0:
                     db.eleminate_gaps(gaps)
                 entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'))

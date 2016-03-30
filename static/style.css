@@ -47,6 +47,9 @@ ul li {
     margin: 5px;
 }
 
+li:hover {
+          background-color: #d1d1e0;
+        }
   
 #date {
     -webkit-appearance: textfield;

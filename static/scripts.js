@@ -267,19 +267,6 @@ $('#ticket_list').delegate('#delete', 'click', function(){
      delete_entry($li);
 });
 
-//hover on list of tickets
-$('#ticket_list').delegate("li", 'mouseover', function(){
-    $li = $(this).closest('li');
-	$li.mouseover(function(){
-        $li.css("background-color", "grey");
-    });
-});
-$('#ticket_list').delegate("li", 'mouseout', function(){
-	$li = $(this).closest('li');
-	$li.mouseout(function(){
-        $li.css("background-color", "initial");
-    });
-});
 //click on an item in the list
 $('#ticket_list').delegate('#open', 'click', function(){
     $li = $(this).closest('li');
