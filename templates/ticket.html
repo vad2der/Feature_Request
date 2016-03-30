@@ -7,7 +7,8 @@
 </head>
 <body>
     <h1>Request ticket page - ID: {{ ticket.id }}</h1>
-    <table>
+    <a href="{{ url_for('logout') }}" align="right">Logout</a>
+	<table>
         <tr>
             <td>ID</td>
             <td>{{ticket.id}}</td>

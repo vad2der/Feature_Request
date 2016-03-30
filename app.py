@@ -3,7 +3,7 @@ to be implemented in Flask
 currently it is a layer to call for db manupulations through dbObject layer
 """
 import dbObject as db
-from flask import Flask, request, Request, render_template, url_for, redirect, flash
+from flask import Flask, request, Request, render_template, url_for, redirect, flash, session
 from flask_restful import Api, Resource, fields, marshal_with
 import ast
 import os
@@ -130,19 +130,17 @@ def login_required(f):
         else:
             flash('Log in first')
             return redirect(url_for('login'))
-        return wrap
-
+    return wrap
 
 # start page
-@app.route('/')
-#@login_required
+@app.route('/requests_and_tickets')
+@login_required
 def requests_and_tickets():
     return render_template('request_and_tickets.html')
 
 
 # ticket page
 @app.route('/ticket/<int:ticket_id>')
-#@login_required
 def ticket(ticket_id):
     if ticket_id in db.get_all_ticket_ids():
         ticket = db.get_requests_by_id_list([ticket_id])[0]
@@ -150,6 +148,12 @@ def ticket(ticket_id):
     else:
         return render_template('404ticket.html', ticket_id=ticket_id)
 
+@app.route('/')		
+def home():
+    logged = False
+    if 'logged_in' in session:
+        logged = True
+    return render_template('home.html', logged=logged)	
 
 #login
 @app.route('/login', methods=['GET', 'POST'])
@@ -157,18 +161,18 @@ def login():
     error = ''
     if request.method == 'POST':
         if request.form['username'] != 'testUser01' or request.form['password'] != 'testUser01':
-            error = 'Invalid username+password pair. CHeck your spelling or contact support.'
-    else:
-        session['logged_in'] = True
-        return redirect(url_for('requests_and_tickets'))
+            error = 'Invalid username+password pair. Check your spelling or contact support.'
+        else:
+            session['logged_in'] = True
+            return redirect(url_for('requests_and_tickets'))
     return render_template('login.html', error=error)
-
+	
 
 #logout
 @app.route('/logout')
 def logout():
-    session.pop('logged_in')
-    return render_template('login.html', error=None)
+    session.pop('logged_in', None)
+    return redirect(url_for('home'))
 
 api.add_resource(FeatureRequest_api, '/api/ticket/<param>')
 api.add_resource(Utils_api, '/api/<param>')
