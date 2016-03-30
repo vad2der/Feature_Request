@@ -2,17 +2,16 @@
 to be implemented in Flask
 currently it is a layer to call for db manupulations through dbObject layer
 """
-from models import ClientName, ProductArea
 import dbObject as db
-from flask import Flask, request, Request, render_template, flash, url_for, jsonify
-from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
+from flask import Flask, request, Request, render_template, url_for, redirect, flash
+from flask_restful import Api, Resource, fields, marshal_with
 import ast
-import time
-
+import os
+from functools import wraps
 
 app = Flask(__name__)
 api = Api(app)
-
+app.secret_key = os.urandom(24)
 ticket_fields = {"id": fields.Integer,
                  "title": fields.String,
                  "description": fields.String,
@@ -98,7 +97,6 @@ class FeatureRequest_api(Resource):
                           target_date=request.form.get('target_date'),
                           url_root=request.form.get('url_root'),
                           product_area=request.form.get('product_area'))
-        time.sleep(1)
         gaps = db.get_gaps()
         if len(gaps) > 0:
             db.eleminate_gaps(gaps)
@@ -124,20 +122,53 @@ class Utils_api(Resource):
         pass
 
 
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Log in first')
+            return redirect(url_for('login'))
+        return wrap
+
+
 # start page
 @app.route('/')
+#@login_required
 def requests_and_tickets():
     return render_template('request_and_tickets.html')
 
 
 # ticket page
 @app.route('/ticket/<int:ticket_id>')
+#@login_required
 def ticket(ticket_id):
     if ticket_id in db.get_all_ticket_ids():
         ticket = db.get_requests_by_id_list([ticket_id])[0]
         return render_template('ticket.html', ticket=ticket)
     else:
         return render_template('404ticket.html', ticket_id=ticket_id)
+
+
+#login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = ''
+    if request.method == 'POST':
+        if request.form['username'] != 'testUser01' or request.form['password'] != 'testUser01':
+            error = 'Invalid username+password pair. CHeck your spelling or contact support.'
+    else:
+        session['logged_in'] = True
+        return redirect(url_for('requests_and_tickets'))
+    return render_template('login.html', error=error)
+
+
+#logout
+@app.route('/logout')
+def logout():
+    session.pop('logged_in')
+    return render_template('login.html', error=None)
 
 api.add_resource(FeatureRequest_api, '/api/ticket/<param>')
 api.add_resource(Utils_api, '/api/<param>')
