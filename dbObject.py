@@ -107,7 +107,12 @@ def get_gaps():
     for p, in s.query(RequestTicket.client_priority).all():
         priority_list.append(p)
     priority_gap_list = []
-    for check_p in range(1, max(priority_list)+1):
+    max_p = 0
+    try:
+        max_p = max(priority_list)
+    except Exception as e:
+        max_p = 0
+    for check_p in range(1, max_p+1):
         if check_p not in priority_list:
             priority_gap_list.append(check_p)
     return priority_gap_list
