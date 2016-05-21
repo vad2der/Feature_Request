@@ -1,17 +1,12 @@
 table {
-    width: 100%;
-    font-family: "Lucida Console";
-    z-index: 1;
-    background-color: white;
+    font-family: Georgia;
+    z-index: 1
 }
 
-tr, td {
-    border-bottom: 1px solid #3366ff;
-}
-
-tr:nth-child(even) {background-color: #f2f2f2}
-
-
+table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: #eeeeea;}
+        
+            
 td {
     height: 50px;
     vertical-align: center;
@@ -24,41 +19,23 @@ td {
     font-weight: normal;
 }
 
-#ticket_request{
-    width: 60%;
-    padding: 5px;
-    float: left;
-    font-size: 1.2em;
-}
-
-#ticket_list{
-    width: auto;
-    padding: 5px;
-    float: left;
-    font-size: 0.9em;
-}
-
-ul {
-    list-style-position: inside;
-}
-
-ul li {
-    background: #F0F0F0;
-    margin: 5px;
-}
-
-li:hover {
-          background-color: #d1d1e0;
+#ticket_list li:hover {
+          background-color: #eeeeea;;
         }
   
 #date {
     -webkit-appearance: textfield;
     background-color: white;
+    backface-visibility: false;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
     cursor: auto;
     padding: 1px;
     border: 2px inset
-    z-index: 999;
+    z-index: 9999;
     border-style: groove;
+}
+
+.footer, .push {
+    height: 155px;
 }

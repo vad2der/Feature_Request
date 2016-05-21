@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Request ticket page</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"></link>
-</head>
-<body>
+{% extends "base.html" %}
+  {% block content %}
     <h1>Request ticket page - ID: {{ ticket.id }}</h1>
-    <a href="{{ url_for('logout') }}" align="right">Logout</a>
-	<table>
+    
+	<table class="table table-striped table-hover table-responsive table-bordered">
         <tr>
             <td>ID</td>
             <td>{{ticket.id}}</td>
@@ -43,5 +37,4 @@
         </tr>
 
     </table>
-</body>
-</html>
+  {% endblock content %}

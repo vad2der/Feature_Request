@@ -4,15 +4,19 @@ $production_area_drop_down = $('#production_area_drop_down');
 $ticket_list = $('#ticket_list');
 
 var ticketTemplate = "<li>"+
-                        "<p class='id' data='{{id}}'>ID: {{id}}</p>"+
-	                    "<p class='title' data='{{title}}'>Title: {{title}}</p>"+"<p class='description' data='{{description}}' hidden>Description: {{description}}</p>"+
-	                    "<p class='client' data='{{client}}'>Client: {{client}}</p>"+
-	                    "<p class='client_priority' data='{{client_priority}}'>Priority: {{client_priority}}</p>"+
-	                    "<p class='target_date' data='{{target_date}}'>Target Date: {{target_date}}</p>"+"<p class='ticket_url' data='{{ticket_url}}' hidden>URL: {{ticket_url}}</p>"+
-	                    "<p class='product_area' data='{{product_area}}'>Product Area: {{product_area}}</p>"+
-	                    "<button id='edit' data-id='{{id}}'>Edit</button>"+
-						"<button id='delete' data-id='{{id}}'>Delete</button>"+
-						"<button id='open' data-id='{{id}}'>Open</button>"+
+                        "<div class='panel panel-default id' data='{{id}}'>ID: {{id}}</div>"+
+	                    "<div class='panel-heading title' data='{{title}}'>Title: {{title}}</p>"+"<p class='description' data='{{description}}' hidden>Description: {{description}}</div>"+
+	                    "<div class='panel-body'>"+
+	                    	"<p class='client' data='{{client}}'>Client: {{client}}</p>"+
+	                    	"<p class='client_priority' data='{{client_priority}}'>Priority: {{client_priority}}</p>"+
+	                    	"<p class='target_date' data='{{target_date}}'>Target Date: {{target_date}}</p>"+"<p class='ticket_url' data='{{ticket_url}}' hidden>URL: {{ticket_url}}</p>"+
+	                    	"<p class='product_area' data='{{product_area}}'>Product Area: {{product_area}}</p>"+
+	                    "</div>"+
+	                    "<div class='panel-footer btn-group'>"+
+	                    	"<button type='button' class='btn btn-warning btn-space' id='edit' data-id='{{id}}'>Edit</button>"+
+							"<button type='button' class='btn btn-danger btn-space' id='delete' data-id='{{id}}'>Delete</button>"+
+							"<button type='button' class='btn btn-info btn-space' id='open' data-id='{{id}}'>Open</button>"+
+						"</div>"+
 	                 "</li>";
 
 // function to fill drop down menu with possible client names

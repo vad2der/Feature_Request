@@ -136,15 +136,21 @@ def login_required(f):
 @app.route('/requests_and_tickets')
 @login_required
 def requests_and_tickets():
-    return render_template('request_and_tickets.html')
+    logged = False
+    if 'logged_in' in session:
+        logged = True
+    return render_template('request_and_tickets.html', logged=logged)
 
 
 # ticket page
 @app.route('/ticket/<int:ticket_id>')
 def ticket(ticket_id):
+    logged = False
+    if 'logged_in' in session:
+        logged = True
     if ticket_id in db.get_all_ticket_ids():
         ticket = db.get_requests_by_id_list([ticket_id])[0]
-        return render_template('ticket.html', ticket=ticket)
+        return render_template('ticket.html', ticket=ticket, logged=logged)
     else:
         return render_template('404ticket.html', ticket_id=ticket_id)
 
@@ -154,6 +160,10 @@ def home():
     if 'logged_in' in session:
         logged = True
     return render_template('home.html', logged=logged)	
+
+@app.route('/about')     
+def about():    
+    return render_template('about.html', logged=logged)  
 
 #login
 @app.route('/login', methods=['GET', 'POST'])

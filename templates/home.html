@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home page</title>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"></link>
-</head>
-<body>
+{% extends "base.html" %}
+  {% block content %}
+
     <h1>Home page</h1>
 	<p>
 		{% if logged == true %}
 			<a align="right" href="{{ url_for('logout') }}">Logout</a>
 		{% else %}			
-			<a align="right" href="{{ url_for('login') }}">Login</a>
+			<span>You need to <a align="right" href="{{ url_for('login') }}">Login</a> first</span>			
 		{% endif %}
 	</p>
 	<p>
@@ -21,6 +15,5 @@
 	{% if error %}
 		<p class="error"><string>Error:</string>{{ error }}</p>
 	{% endif %}
-</body>
 
-</html>
+  {% endblock content %}
