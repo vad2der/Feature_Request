@@ -162,7 +162,10 @@ def home():
     return render_template('home.html', logged=logged)	
 
 @app.route('/about')     
-def about():    
+def about():
+    logged = False
+    if 'logged_in' in session:
+        logged = True
     return render_template('about.html', logged=logged)  
 
 #login
