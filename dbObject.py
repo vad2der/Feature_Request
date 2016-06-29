@@ -1,4 +1,4 @@
-from models import RequestTicket, ClientName, ProductArea, Base
+from models import RequestTicket, ClientName, ProductArea, Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import func
@@ -179,3 +179,24 @@ def update_entry(ticket):
           'url_root': ticket['url_root'],
           'product_area': ticket['product_area']}
     s.query(RequestTicket).filter(RequestTicket.id == id).update({rt})
+
+def register(username, email, password):
+    usr = User(username=username, email=email, password=password)
+    try:
+        s.add(usr)
+        s.commit()
+        print "Successfully added"
+        print usr
+    except Exception as e:
+        s.rollback()
+
+def login(username, password):
+    try:
+        get_user = s.query(User).filter(User.username == username).first()
+        if get_user.password == password:
+            return True
+        else:
+            return False
+    except:
+        print "no such username"
+        return "Wrong Name+password pair"

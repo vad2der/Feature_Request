@@ -179,7 +179,30 @@ def login():
             session['logged_in'] = True
             return redirect(url_for('requests_and_tickets'))
     return render_template('login.html', error=error)
-	
+
+@app.route('/register', methods=['GET', 'POST'])	
+def register():    
+    error = ''
+    if request.method == 'POST':
+        print "stage1---------------------------"
+        username = request.form['username']
+        email = request.form['email']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        
+        if username == "":
+            error += "Username is missing. "
+        if email == "":
+            error += "Email is missing. "
+        if password1 == "" or password2 == "":
+            error += "Type in and repeat the password. "
+        if password1 != password2:
+            error += "Passwords are not identical. "       
+        else:            
+            db.register(username, email, password1)
+            return render_template('login.html', error=error)
+        return render_template('register.html', error=error)
+    return render_template('register.html', error=error)
 
 #logout
 @app.route('/logout')
@@ -203,7 +226,7 @@ def get_root_url():
 if __name__ == "__main__":
 
     # will drop existing and create new tables
-    #db.create_tables()
+    db.create_tables()
     # test entries
     #db.insert_new("request_1", "description for request 1", ClientName.CLIENT_A, 1, 'Sun, 01 May 2016', get_root_url(), ProductArea.BILLING)
     #db.insert_new("request_2", "description for request 2", ClientName.CLIENT_B, 2, 'Mon, 02 May 2016', get_root_url(), ProductArea.CLAIM)

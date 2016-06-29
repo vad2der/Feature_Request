@@ -74,3 +74,18 @@ class RequestTicket(Base):
                 u"target_date": str(self.target_date),
                 u"ticket_url": str(self.ticket_url),
                 u"product_area": self.product_area}
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    username = Column(String(30))
+    email = Column(String(50))
+    password = Column(String(30))
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
+
+    def __str__(self):
+        return json.dumps(self.serialize, indent=4)
