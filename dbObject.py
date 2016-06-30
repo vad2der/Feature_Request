@@ -185,18 +185,15 @@ def register(username, email, password):
     try:
         s.add(usr)
         s.commit()
-        print "Successfully added"
-        print usr
+        #print "Successfully added"
+        #print usr
     except Exception as e:
         s.rollback()
 
-def login(username, password):
+def login(username):
     try:
         get_user = s.query(User).filter(User.username == username).first()
-        if get_user.password == password:
-            return True
-        else:
-            return False
+        return get_user, "Success"
     except:
-        print "no such username"
-        return "Wrong Name+password pair"
+        #print "no such username"
+        return "", "No such Username Registered"

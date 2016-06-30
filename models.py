@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, Enum
+from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 import enum
 import json
 
@@ -46,8 +47,9 @@ class RequestTicket(Base):
     target_date = Column(DateTime)
     ticket_url = Column(String(100))
     product_area = Column(Enum('Policies', 'Billing', 'Claims', 'Reports'))
+    user_id = Column(Integer, ForeignKey('user.id'))
 
-    def __init__(self, ind, title, description, client, client_priority, target_date, ticket_url, product_area):
+    def __init__(self, ind, title, description, client, client_priority, target_date, ticket_url, product_area, user_id):
         self.id = ind
         self.title = str(title)
         self.description = str(description)
@@ -56,6 +58,7 @@ class RequestTicket(Base):
         self.target_date = target_date
         self.ticket_url = ticket_url     # to be updated right after getting an id
         self.product_area = product_area
+        self.user_id = user_id
 
     def __str__(self):
         return json.dumps(self.serialize, indent=4)
@@ -80,7 +83,8 @@ class User(Base):
     id = Column(Integer, unique=True, primary_key=True, autoincrement=True)
     username = Column(String(30))
     email = Column(String(50))
-    password = Column(String(30))
+    password = Column(String(200))
+    request_tickets = relationship('RequestTicket', backref='user')
 
     def __init__(self, username, email, password):
         self.username = username
@@ -89,3 +93,10 @@ class User(Base):
 
     def __str__(self):
         return json.dumps(self.serialize, indent=4)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {u"id": self.id,
+                u"username": self.username,
+                u"email": self.email}

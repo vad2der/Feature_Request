@@ -8,8 +8,10 @@ from flask_restful import Api, Resource, fields, marshal_with
 import ast
 import os
 from functools import wraps
+from flask.ext.bcrypt import Bcrypt
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 api = Api(app)
 app.secret_key = os.urandom(24)
 ticket_fields = {"id": fields.Integer,
@@ -54,7 +56,8 @@ class FeatureRequest_api(Resource):
                           client_priority=request.form.get('client_priority'),
                           target_date=request.form.get('target_date'),
                           url_root=request.form.get('url_root'),
-                          product_area=request.form.get('product_area'))
+                          product_area=request.form.get('product_area'),
+                          user_id=session['user_id'])
         return '', 201
 
 
@@ -173,22 +176,38 @@ def about():
 def login():
     error = ''
     if request.method == 'POST':
-        if request.form['username'] != 'testUser01' or request.form['password'] != 'testUser01':
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+        # shuffle the pawwsord with username
+        pswrd = password[0]+username+password[1:]
+        
+        pass_response = db.login(username)[0].password
+        user_id = db.login(username)[0].id
+        #print pass_response
+        logged = bcrypt.check_password_hash(pass_response, pswrd)
+
+        if logged is False:
             error = 'Invalid username+password pair. Check your spelling or contact support.'
-        else:
+        else:        
             session['logged_in'] = True
+            session['username'] = username
+            session['user_id'] = user_id
             return redirect(url_for('requests_and_tickets'))
     return render_template('login.html', error=error)
 
 @app.route('/register', methods=['GET', 'POST'])	
-def register():    
+def register():
+    """
+    registration
+    TODO: get verivficatios out of the function
+    """ 
     error = ''
     if request.method == 'POST':
-        print "stage1---------------------------"
-        username = request.form['username']
-        email = request.form['email']
-        password1 = request.form['password1']
-        password2 = request.form['password2']
+        
+        username = request.form['username'].strip()
+        email = request.form['email'].strip()
+        password1 = request.form['password1'].strip()
+        password2 = request.form['password2'].strip()
         
         if username == "":
             error += "Username is missing. "
@@ -198,9 +217,20 @@ def register():
             error += "Type in and repeat the password. "
         if password1 != password2:
             error += "Passwords are not identical. "       
-        else:            
-            db.register(username, email, password1)
-            return render_template('login.html', error=error)
+        elif error == "":
+            # shuffle the pawwsord with username
+            pswrd = password1[0]+username+password1[1:]
+            # bcrypt the mix
+            pw_hash = bcrypt.generate_password_hash(pswrd)
+            # put it to the db
+            
+            #print username+" "+pw_hash
+            print len(pw_hash)
+            print pw_hash
+            print type(pw_hash)
+            
+            db.register(username, email, pw_hash)
+            return redirect(url_for('login'))
         return render_template('register.html', error=error)
     return render_template('register.html', error=error)
 
@@ -208,6 +238,8 @@ def register():
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
+    session.pop('username', None)
+    session.pop('user_in', None)
     return redirect(url_for('home'))
 
 api.add_resource(FeatureRequest_api, '/api/ticket/<param>')
