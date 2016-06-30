@@ -142,7 +142,8 @@ def requests_and_tickets():
     logged = False
     if 'logged_in' in session:
         logged = True
-    return render_template('request_and_tickets.html', logged=logged)
+        script_reference = '<script src="{{ url_for('+"'static'"+', filename='+"'scripts.js'"+') }}"></script>'
+    return render_template('request_and_tickets.html', logged=logged, script_reference=script_reference)
 
 
 # ticket page
