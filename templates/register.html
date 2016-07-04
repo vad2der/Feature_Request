@@ -9,6 +9,6 @@
     <input class="btn btn-default" type="submit" value="Sign Up">
  </form>
 	{% if error %}
-		<p class="error"><string>Error:</string>{{ error }}</p>
+		<p class="error has-error"><string>Error: {{ error }}</string></p>
 	{% endif %}
   {% endblock content %}

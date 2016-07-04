@@ -13,7 +13,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="body">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -29,14 +29,15 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('about') }}">About</a></li>
-                {% if logged == true %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if logged == true %}            
                     <li><a href="">{{session['username']}}</a></li>
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% else %}
                     <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('register') }}">Register</a></li>
-                {% endif %}
-
+                    <li><a href="{{ url_for('register') }}">Register</a></li>            
+                {% endif %}            
             </ul>
         </div>
     </div>
@@ -52,10 +53,10 @@
         </div>
         <!--div class="col-md-2">
         </div-->
-    <div class="push"></div>
+
     </div>
-    <footer>
-        <p> &copy; Vadim Deryabin</p>
+    <footer class="navbar navbar-fixed-bottom footer">
+        <p>&copy; Vadim Deryabin</p>
     </footer>
 </div>
 

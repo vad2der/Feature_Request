@@ -7,6 +7,6 @@
 		<input class="btn btn-default" type="submit" value="Login">
 	</form>
 	{% if error %}
-		<p class="error"><string>Error:</string>{{ error }}</p>
+		<p class="error has-error"><string class="control-label" for="inputError">Error: {{ error }}</string></p>
 	{% endif %}
   {% endblock content %}

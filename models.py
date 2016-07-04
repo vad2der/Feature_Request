@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-import enum
+#import enum
 import json
 
 Base = declarative_base()
@@ -76,7 +76,8 @@ class RequestTicket(Base):
                 u"client_priority": self.client_priority,
                 u"target_date": str(self.target_date),
                 u"ticket_url": str(self.ticket_url),
-                u"product_area": self.product_area}
+                u"product_area": self.product_area,
+                u"user_id": self.user_id}
 
 class User(Base):
     __tablename__ = 'user'

@@ -36,7 +36,8 @@ class FeatureRequest_api(Resource):
         :return:
         """
         if param == "all":            
-            output = db.get_all()
+            output = db.get_all(session['user_id'])
+            print output
             return output, 200
 
 
@@ -46,8 +47,10 @@ class FeatureRequest_api(Resource):
         :param param:
         :return:
         """
+        print session['user_id']
         if param =="new":
-            entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'))
+            priority = request.form.get('client_priority')
+            entries_to_downgrade = db.check_priorities_EL(priority, session['user_id'])
             if len(entries_to_downgrade) > 0:
                 db.downgrade_priorities(entries_to_downgrade)
             db.insert_new(title=request.form.get('title'),
@@ -64,7 +67,7 @@ class FeatureRequest_api(Resource):
     def delete(self, param):
         if param == 'delete':
             db.delete_entry(request.form.get('id'))
-        gaps = db.get_gaps()
+        gaps = db.get_gaps(session['user_id'])
         if len(gaps) > 0:
             db.eleminate_gaps(gaps)
         return '', 204
@@ -86,7 +89,7 @@ class FeatureRequest_api(Resource):
                           product_area=request.form.get('product_area'))
             else:
                 db.delete_entry(ticket_id)
-                gaps = db.get_gaps()
+                gaps = db.get_gaps(session['user_id'])
                 if len(gaps) > 0:
                     db.eleminate_gaps(gaps)
                 entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'))
@@ -99,8 +102,9 @@ class FeatureRequest_api(Resource):
                           client_priority=request.form.get('client_priority'),
                           target_date=request.form.get('target_date'),
                           url_root=request.form.get('url_root'),
-                          product_area=request.form.get('product_area'))
-        gaps = db.get_gaps()
+                          product_area=request.form.get('product_area'),
+                          user_id=session['user_id'])
+        gaps = db.get_gaps(session['user_id'])
         if len(gaps) > 0:
             db.eleminate_gaps(gaps)
         return '', 201
@@ -111,7 +115,7 @@ class Utils_api(Resource):
         if param == "client_list":
             return db.get_client_list()
         if param == "possible_priorities":
-            return db.get_possible_priorities()
+            return db.get_possible_priorities(session['user_id'])
         if param == "production_areas":
             return db.get_production_area_list()
 
@@ -142,8 +146,7 @@ def requests_and_tickets():
     logged = False
     if 'logged_in' in session:
         logged = True
-        script_reference = '<script src="{{ url_for('+"'static'"+', filename='+"'scripts.js'"+') }}"></script>'
-    return render_template('request_and_tickets.html', logged=logged, script_reference=script_reference)
+    return render_template('request_and_tickets.html', logged=logged)
 
 
 # ticket page
@@ -152,7 +155,7 @@ def ticket(ticket_id):
     logged = False
     if 'logged_in' in session:
         logged = True
-    if ticket_id in db.get_all_ticket_ids():
+    if ticket_id in db.get_all_ticket_ids(session['user_id']):
         ticket = db.get_requests_by_id_list([ticket_id])[0]
         return render_template('ticket.html', ticket=ticket, logged=logged)
     else:
@@ -177,23 +180,26 @@ def about():
 def login():
     error = ''
     if request.method == 'POST':
-        username = request.form['username'].strip()
-        password = request.form['password'].strip()
-        # shuffle the pawwsord with username
-        pswrd = password[0]+username+password[1:]
-        
-        pass_response = db.login(username)[0].password
-        user_id = db.login(username)[0].id
-        #print pass_response
-        logged = bcrypt.check_password_hash(pass_response, pswrd)
+        try:
+            username = request.form['username'].strip()
+            password = request.form['password'].strip()
+            # shuffle the pawwsord with username
+            pswrd = password[0]+username+password[1:]
+            
+            pass_response = db.login(username)[0].password
+            user_id = db.login(username)[0].id
+            #print pass_response
+            logged = bcrypt.check_password_hash(pass_response, pswrd)
 
-        if logged is False:
+            if logged is False:
+                error = 'Invalid username+password pair. Check your spelling or contact support.'
+            else:        
+                session['logged_in'] = True
+                session['username'] = username
+                session['user_id'] = user_id
+                return redirect(url_for('requests_and_tickets'))
+        except Exception as e:
             error = 'Invalid username+password pair. Check your spelling or contact support.'
-        else:        
-            session['logged_in'] = True
-            session['username'] = username
-            session['user_id'] = user_id
-            return redirect(url_for('requests_and_tickets'))
     return render_template('login.html', error=error)
 
 @app.route('/register', methods=['GET', 'POST'])	
@@ -240,7 +246,7 @@ def register():
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
-    session.pop('user_in', None)
+    session.pop('logged_in', None)
     return redirect(url_for('home'))
 
 api.add_resource(FeatureRequest_api, '/api/ticket/<param>')

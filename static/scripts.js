@@ -34,7 +34,9 @@ var get_client_list = function() {
 	 })
 }
 // listener to fill client names into drop down menu
-$(window).load(get_client_list);
+if (window.location.pathname == "/requests_and_tickets") {
+	$(window).load(get_client_list);
+}
 
 
 // function to show and fill priority drop down
@@ -52,7 +54,9 @@ var get_possible_priorities = function() {
 	 })
 }
 // listener to fill priority drop down
-$(window).load(get_possible_priorities);
+if (window.location.pathname == "/requests_and_tickets") {
+	$(window).load(get_possible_priorities);
+}
 
 // date picker
 $('#date').datepicker({ dateFormat: 'D, d M yy', minDate: 0, maxDate: '+1y', showAnim: 'show'});
@@ -73,7 +77,9 @@ var get_production_areas = function() {
 	 })
 }
 // listener to fill prod area drop down menu
-$(window).load(get_production_areas);
+if (window.location.pathname == "/requests_and_tickets") {
+	$(window).load(get_production_areas);
+}
 
 // helper to show buttons
 var show_proper_buttons = function(){
@@ -118,13 +124,16 @@ var check_fields = function (object){
 
 //function to insert a new ticket
 var insert_new_ticket = function(){
-    var d = $('#date').val();
-    var a = JSON.stringify(d).slice(1,4);
-    var day = JSON.stringify(d).slice(6,8);
-    var mm = JSON.stringify(d).slice(9,12);
-    var yy = JSON.stringify(d).slice(13, 17);
-    //alert('wd: '+a+', d: '+day+', m: '+mm+', y: '+yy)
-    var date = a+', '+day+' '+mm+' '+yy;
+    var fullDate = $('#date').val();    
+    var splitDate1 = fullDate.split(',');
+    var weekDay = splitDate1[0]
+    
+    var splitDate2 = splitDate1[1].split(" ")    
+    var day = splitDate2[1]
+    var mm = splitDate2[2]
+    var yy = splitDate2[3]
+    //alert('wd: '+weekDay+', d: '+day+', m: '+mm+', y: '+yy)
+    var date = weekDay+', '+day+' '+mm+' '+yy;
     var new_request={
         title: $('#ticket_title').val(),
         description: $('#ticket_description').val(),
@@ -187,17 +196,21 @@ var get_existing_tickets = function(){
 	    url: '/api/ticket/all',
 	    success: function(tickets) {	        
 			$ticket_list.empty();
-	        $.each(tickets, function (i, ticket){
-	            ticket.target_date = ticket.target_date.slice(0,17)
-	            $ticket_list.append(Mustache.render(ticketTemplate, ticket))
-	        });
+	        if (tickets.length > 0){
+	        	$.each(tickets, function (i, ticket){
+	            	ticket.target_date = ticket.target_date.slice(0,17)
+	            	$ticket_list.append(Mustache.render(ticketTemplate, ticket))
+	        	});
+	        }
 	    },
 		error: function() {
 		    alert('Error getting existing requests');
 	    }
 	 })
 }
-$(window).load(get_existing_tickets);
+if (window.location.pathname == "/requests_and_tickets") {
+	$(window).load(get_existing_tickets);
+}
 
 // reset button
 var reset = function(){

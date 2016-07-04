@@ -17,23 +17,25 @@ def create_tables():
     Base.metadata.create_all(engine)
 
 
-def get_all():
+def get_all(user_id):
     # get all entries
-    return s.query(RequestTicket).order_by(RequestTicket.client_priority).all()
+    return s.query(RequestTicket)\
+            .filter(RequestTicket.user_id == user_id)\
+            .order_by(RequestTicket.client_priority).all()
 
 
-def get_all_ticket_ids():
+def get_all_ticket_ids(user_id):
     """
     function gets all ids in RequestTicket table
     :return list of ids
     """
     id_list = []
-    for id, in s.query(RequestTicket.id).all():
+    for id, in s.query(RequestTicket.id).filter(RequestTicket.user_id == user_id).all():
         id_list.append(id)
     return id_list
 
 
-def insert_new(title, description, client, client_priority, target_date, url_root, product_area, ind=None):
+def insert_new(title, description, client, client_priority, target_date, url_root, product_area, user_id, ind=None):
     if ind is None:
         ind = 0
         try:
@@ -43,7 +45,8 @@ def insert_new(title, description, client, client_priority, target_date, url_roo
     # instantiate a new object from mapped class
     rt = RequestTicket(ind=int(ind), title=str(title), description=str(description), client=client,
                        client_priority=int(client_priority), target_date=datetime.strptime(target_date, "%a, %d %b %Y"),
-                       ticket_url=url_root+'/ticket/'+str(ind), product_area=product_area)
+                       ticket_url=url_root+'/ticket/'+str(ind), product_area=product_area, user_id=user_id)
+    #print rt
     try:
         s.add(rt)
         s.commit()
@@ -52,14 +55,16 @@ def insert_new(title, description, client, client_priority, target_date, url_roo
     # update the entry with ticket URL = "/ticket/" + entry.id
 
 
-def check_priorities_EL(priority):
+def check_priorities_EL(priority, user_id):
     """
     checks if there are any entries with equal of less priotiry
     :param priority:
     :return: list of id of the entries with equal or less priority
     """
     check = []
-    for row in s.query(RequestTicket).filter(RequestTicket.client_priority >= priority).all():
+    for row in s.query(RequestTicket)\
+                .filter(RequestTicket.user_id == user_id)\
+                .filter(RequestTicket.client_priority >= priority).all():
         check.append(row.id)
     return check
 
@@ -83,12 +88,13 @@ def downgrade_priorities(entry_ids):
         s.rollback()
 
 
-def get_possible_priorities():
+def get_possible_priorities(user_id):
     """
     :return: gathers all existing priorities and adds one more at the end
     """
     priority_list = []
-    for p, in s.query(RequestTicket.client_priority).all():
+    for p, in s.query(RequestTicket.client_priority)\
+               .filter(RequestTicket.user_id == user_id).all():
         priority_list.append(p)
     # and the next one
     if len(priority_list) > 0:
@@ -99,12 +105,13 @@ def get_possible_priorities():
     return list(priority_list)
 
 
-def get_gaps():
+def get_gaps(user_id):
     """
     :return: a list with gaps in priorities
     """
     priority_list = []
-    for p, in s.query(RequestTicket.client_priority).all():
+    for p, in s.query(RequestTicket.client_priority)\
+               .filter(RequestTicket.user_id == user_id).all():
         priority_list.append(p)
     priority_gap_list = []
     max_p = 0
@@ -127,8 +134,9 @@ def eleminate_gaps(gap_list):
     for g in sorted(gap_list, reversed):
         for priority in range(g+1, int(s.query(func.max(RequestTicket.client_priority)).scalar())+1):
             try:
-                s.query(RequestTicket).filter(RequestTicket.client_priority == priority)\
-                                      .update({"client_priority": priority-1})
+                s.query(RequestTicket)\
+                 .filter(RequestTicket.client_priority == priority)\
+                 .update({"client_priority": priority-1})
                 s.commit()
             except Exception as e:
                 s.rollback()
