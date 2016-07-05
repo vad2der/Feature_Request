@@ -8,7 +8,7 @@ from flask_restful import Api, Resource, fields, marshal_with
 import ast
 import os
 from functools import wraps
-from flask.ext.bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -37,7 +37,7 @@ class FeatureRequest_api(Resource):
         """
         if param == "all":            
             output = db.get_all(session['user_id'])
-            print output
+            #print output
             return output, 200
 
 
@@ -47,7 +47,7 @@ class FeatureRequest_api(Resource):
         :param param:
         :return:
         """
-        print session['user_id']
+        #print session['user_id']
         if param =="new":
             priority = request.form.get('client_priority')
             entries_to_downgrade = db.check_priorities_EL(priority, session['user_id'])
@@ -92,7 +92,7 @@ class FeatureRequest_api(Resource):
                 gaps = db.get_gaps(session['user_id'])
                 if len(gaps) > 0:
                     db.eleminate_gaps(gaps)
-                entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'))
+                entries_to_downgrade = db.check_priorities_EL(request.form.get('client_priority'), session['user_id'])
                 if len(entries_to_downgrade) > 0:
                     db.downgrade_priorities(entries_to_downgrade)
                 db.insert_new(ind=request.form.get('id'),
@@ -232,9 +232,9 @@ def register():
             # put it to the db
             
             #print username+" "+pw_hash
-            print len(pw_hash)
-            print pw_hash
-            print type(pw_hash)
+            #print len(pw_hash)
+            #print pw_hash
+            #print type(pw_hash)
             
             db.register(username, email, pw_hash)
             return redirect(url_for('login'))
@@ -265,11 +265,8 @@ def get_root_url():
 if __name__ == "__main__":
 
     # will drop existing and create new tables
-    db.create_tables()
-    # test entries
-    #db.insert_new("request_1", "description for request 1", ClientName.CLIENT_A, 1, 'Sun, 01 May 2016', get_root_url(), ProductArea.BILLING)
-    #db.insert_new("request_2", "description for request 2", ClientName.CLIENT_B, 2, 'Mon, 02 May 2016', get_root_url(), ProductArea.CLAIM)
-    #db.insert_new("request_3", "description for request 3", ClientName.CLIENT_C, 3, 'Tue, 03 May 2016', get_root_url(), ProductArea.POLICIES)
+    #db.create_tables()
+    
     app.run(debug=True)
 
 

@@ -149,9 +149,9 @@ var insert_new_ticket = function(){
 			url: '/api/ticket/new',
 			data: new_request,
 			success: function() {
-				$('#ticket_title').val('Input title of your request');
-				$('#ticket_description').val('Input concise description of your request');
-				$('#date').val('Pick a date');
+				$('#ticket_title').val('');
+				$('#ticket_description').val('');
+				$('#date').val('');
 				get_client_list();
 				get_possible_priorities();
 				get_production_areas();
@@ -214,13 +214,13 @@ if (window.location.pathname == "/requests_and_tickets") {
 
 // reset button
 var reset = function(){
-	$('#ticket_title').val('Input title of you request');
+	$('#ticket_title').val('');
 				$('#ticket_id').text('');
 				$('#ticket_id').closest('tr').hide(50);
 				$('#ticket_url').text('');
 				$('#ticket_url').closest('tr').hide(50);
-				$('#ticket_description').val('Input concise description of your request');
-				$('#date').val('Pick a date');
+				$('#ticket_description').val('');
+				$('#date').val('');
 				get_client_list();
 				get_possible_priorities();
 				get_production_areas();

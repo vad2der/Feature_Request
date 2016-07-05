@@ -22,9 +22,10 @@ To run the app type:
 Database of choise was SQLight to simplify usage - no database server has to be installed and run.
 Open a browser. Application is built on Flask, and by default hostname will be: `http://127.0.0.1:5000/`
 
-`username = testUser01`
-`password = testUser01`
+`username = user1`
+`password = pass1`
 
+or register and login.
 
 Requirements:
 -------------
@@ -68,3 +69,9 @@ ToDo list:
 * ~~Wrap app in login~~
 
 1. ~~don't forget to put a secret_key~~
+
+* ~~Expande schema and functionality~~
+1. ~~Add registration~~
+2. ~~Refine schema (add User model and relation User 1-* TicketRequests)~~
+3. ~~Make password one way enctipted~~
+4. ~~Update CRUD operations to comply with new schema~~
